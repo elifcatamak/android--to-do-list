@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showAlertDialog();
-                // show a list create popup
             }
         });
     }
