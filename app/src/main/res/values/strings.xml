@@ -2,4 +2,9 @@
     <string name="app_name">ToDoListPractice</string>
     <string name="main_title">To Do List</string>
     <string name="main_titleTwo">Start adding your lists</string>
+    <string name="popup_title">Popup Title</string>
+    <string name="popup_hint_name">Enter list name</string>
+    <string name="popup_button">Button</string>
+    <string name="popup_addTitle">Add New ToDo List</string>
+    <string name="popup_saveButton">Save</string>
 </resources>

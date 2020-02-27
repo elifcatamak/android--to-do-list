@@ -8,6 +8,10 @@ public class ToDoList {
     public ToDoList() {
     }
 
+    public ToDoList(String listName) {
+        this.listName = listName;
+    }
+
     public ToDoList(String listName, String dateAdded) {
         this.listName = listName;
         this.dateAdded = dateAdded;

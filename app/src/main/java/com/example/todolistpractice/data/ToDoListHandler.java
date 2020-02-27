@@ -11,10 +11,11 @@ import com.example.todolistpractice.model.ToDoList;
 import com.example.todolistpractice.util.Constants;
 import com.example.todolistpractice.util.UsefulMethods;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ToDoListHandler extends DatabaseHandler{
-    List<ToDoList> toDoLists;
+    private List<ToDoList> toDoLists;
 
     public ToDoListHandler(@Nullable Context context) {
         super(context);
@@ -24,7 +25,6 @@ public class ToDoListHandler extends DatabaseHandler{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Constants.COLNAME_ID, toDoList.getId());
         values.put(Constants.COLNAME_NAME, toDoList.getListName());
         values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
 
@@ -55,6 +55,8 @@ public class ToDoListHandler extends DatabaseHandler{
     }
 
     public List<ToDoList> getAllToDoLists(){
+        toDoLists = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOLIST,
@@ -84,7 +86,6 @@ public class ToDoListHandler extends DatabaseHandler{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Constants.COLNAME_ID, toDoList.getId());
         values.put(Constants.COLNAME_NAME, toDoList.getListName());
         values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
 
