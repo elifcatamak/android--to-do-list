@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ToDoListPractice</string>
+    <string name="main_title">To Do List</string>
+    <string name="main_titleTwo">Start adding your lists</string>
+</resources>
