@@ -21,6 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:fontFamily="@font/architects_daughter"
                 android:text="@string/listRow_listName"
                 android:textSize="18sp"
                 android:textStyle="italic|bold" />
@@ -31,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/listRow_listName"
                 android:layout_centerHorizontal="true"
+                android:fontFamily="@font/architects_daughter"
                 android:paddingTop="5dp"
                 android:text="@string/listRow_listDateAdded"
                 android:textSize="18sp"
