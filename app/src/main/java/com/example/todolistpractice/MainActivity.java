@@ -22,12 +22,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private FloatingActionButton fabAdd;
-    private AlertDialog alertDialog;
-    private AlertDialog.Builder builder;
+
     private TextView popupTitle;
     private EditText popupListName;
     private Button popupButton;
+    private FloatingActionButton fabAdd;
+
+    private AlertDialog alertDialog;
+    private AlertDialog.Builder builder;
 
     private List<ToDoList> toDoLists;
     private DatabaseHandler databaseHandler;

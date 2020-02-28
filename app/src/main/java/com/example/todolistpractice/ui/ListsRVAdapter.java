@@ -22,6 +22,7 @@ import java.util.List;
 
 public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHolder> {
     private Context context;
+
     private List<ToDoList> toDoLists;
     private ToDoListHandler toDoListHandler;
 
@@ -54,6 +55,7 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
         private TextView dateAdded;
         private Button deleteButton;
         private Button updateButton;
+
         private AlertDialog alertDialog;
         private AlertDialog.Builder builder;
 
