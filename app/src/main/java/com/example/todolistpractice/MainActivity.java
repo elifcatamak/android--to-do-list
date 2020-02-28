@@ -3,6 +3,7 @@ package com.example.todolistpractice;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -38,14 +39,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         databaseHandler = new DatabaseHandler(this);
-        toDoListHandler = new ToDoListHandler(this);
 
-        toDoLists = toDoListHandler.getAllToDoLists();
-
-        for(ToDoList t: toDoLists)
-            Log.d(TAG, "onCreate: " + t.getListName());
-
-        // Check which activity to show
+        decideActivityToShow();
 
         fabAdd = findViewById(R.id.main_fab_add);
 
@@ -55,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
                 showAlertDialog();
             }
         });
+    }
+
+    private void decideActivityToShow() {
+        toDoListHandler = new ToDoListHandler(this);
+
+        if(toDoListHandler.getCount() != 0){
+            //TODO: Might send the todolists list to ShowList from here
+            startActivity(new Intent(MainActivity.this, ShowListsActivity.class));
+            finish();
+        }
     }
 
     private void showAlertDialog() {
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 alertDialog.dismiss();
+                startActivity(new Intent(MainActivity.this, ShowListsActivity.class));
             }
         }, 1500);
     }
