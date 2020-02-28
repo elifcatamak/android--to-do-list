@@ -12,4 +12,6 @@
     <string name="popupSure_text">Are you sure?</string>
     <string name="popupSure_No">No</string>
     <string name="popupSure_yes">Yes</string>
+    <string name="popup_updateTitle">Update ToDo List</string>
+    <string name="popup_updateButton">Update</string>
 </resources>
