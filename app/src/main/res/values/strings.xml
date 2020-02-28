@@ -9,4 +9,7 @@
     <string name="popup_saveButton">Save</string>
     <string name="listRow_listName">List Name</string>
     <string name="listRow_listDateAdded">Date Added</string>
+    <string name="popupSure_text">Are you sure?</string>
+    <string name="popupSure_No">No</string>
+    <string name="popupSure_yes">Yes</string>
 </resources>

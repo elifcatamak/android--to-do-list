@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         toDoListHandler = new ToDoListHandler(this);
 
         if(toDoListHandler.getCount() != 0){
-            //TODO: Might send the todolists list to ShowList from here
             startActivity(new Intent(MainActivity.this, ShowListsActivity.class));
             finish();
         }

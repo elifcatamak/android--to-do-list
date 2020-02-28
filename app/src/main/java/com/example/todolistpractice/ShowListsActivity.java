@@ -44,4 +44,5 @@ public class ShowListsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
 }

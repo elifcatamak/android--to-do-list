@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/popupSure_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/architects_daughter"
+            android:text="@string/popupSure_text"
+            android:textSize="18sp"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:id="@+id/popupSure_noButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/popupSure_text"
+            android:layout_marginTop="30dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/popupSure_No"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/popupSure_yesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/popupSure_yes"
+            android:layout_below="@id/popupSure_text"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
