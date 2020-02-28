@@ -14,4 +14,5 @@
     <string name="popupSure_yes">Yes</string>
     <string name="popup_updateTitle">Update ToDo List</string>
     <string name="popup_updateButton">Update</string>
+    <string name="itemRow_text">ToDo Item</string>
 </resources>

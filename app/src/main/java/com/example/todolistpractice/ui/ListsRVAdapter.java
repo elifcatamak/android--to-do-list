@@ -2,6 +2,7 @@ package com.example.todolistpractice.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolistpractice.R;
+import com.example.todolistpractice.ShowItemsActivity;
 import com.example.todolistpractice.data.ToDoListHandler;
 import com.example.todolistpractice.model.ToDoList;
 import com.google.android.material.snackbar.Snackbar;
@@ -56,6 +58,7 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
         private TextView dateAdded;
         private Button deleteButton;
         private Button updateButton;
+        private Button detailsButton;
         private TextView popupTitle;
         private EditText popupListName;
         private Button popupButton;
@@ -72,9 +75,11 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
             dateAdded = itemView.findViewById(R.id.listRow_listDateAdded);
             deleteButton = itemView.findViewById(R.id.listRow_deleteButton);
             updateButton = itemView.findViewById(R.id.listRow_editButton);
+            detailsButton = itemView.findViewById(R.id.listRow_detailsButton);
 
             deleteButton.setOnClickListener(this);
             updateButton.setOnClickListener(this);
+            detailsButton.setOnClickListener(this);
         }
 
         @Override
@@ -86,9 +91,18 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
                 case R.id.listRow_editButton:
                     showAlertDialog();
                     break;
+                case R.id.listRow_detailsButton:
+                    showListItems();
+                    break;
                 default:
                     break;
             }
+        }
+
+        private void showListItems() {
+            Intent intent = new Intent(context, ShowItemsActivity.class);
+            intent.putExtra("listId", toDoLists.get(getAdapterPosition()).getId());
+            context.startActivity(intent);
         }
 
         private void showAlertDialog() {

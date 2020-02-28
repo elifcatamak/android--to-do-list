@@ -16,9 +16,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE IF NOT EXISTS " + Constants.TABLENAME_TODOLIST + " (" +
+        String query;
+
+        query = "CREATE TABLE IF NOT EXISTS " + Constants.TABLENAME_TODOLIST + " (" +
                 Constants.COLNAME_ID + " INTEGER PRIMARY KEY, " +
                 Constants.COLNAME_NAME + " TEXT, " +
+                Constants.COLNAME_DATEADDED + " LONG)";
+
+        db.execSQL(query);
+
+        query = "CREATE TABLE IF NOT EXISTS " + Constants.TABLENAME_TODOITEM + " (" +
+                Constants.COLNAME_ID + " INTEGER PRIMARY KEY, " +
+                Constants.COLNAME_NAME + " TEXT, " +
+                Constants.COLNAME_ISDONE + " INTEGER, " +
                 Constants.COLNAME_DATEADDED + " LONG)";
 
         db.execSQL(query);
@@ -26,9 +36,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String query = "DROP TABLE IF EXISTS " + Constants.TABLENAME_TODOLIST;
+        String query;
 
+        query = "DROP TABLE IF EXISTS " + Constants.TABLENAME_TODOLIST;
         db.execSQL(query);
+
+        query = "DROP TABLE IF EXISTS " + Constants.TABLENAME_TODOITEM;
+        db.execSQL(query);
+
         this.onCreate(db);
     }
 }
