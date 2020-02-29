@@ -12,17 +12,6 @@ public class ToDoList {
         this.listName = listName;
     }
 
-    public ToDoList(String listName, String dateAdded) {
-        this.listName = listName;
-        this.dateAdded = dateAdded;
-    }
-
-    public ToDoList(int id, String listName, String dateAdded) {
-        this.id = id;
-        this.listName = listName;
-        this.dateAdded = dateAdded;
-    }
-
     public int getId() {
         return id;
     }

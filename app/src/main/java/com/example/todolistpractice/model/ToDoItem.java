@@ -5,21 +5,30 @@ public class ToDoItem {
     private String name;
     private boolean isDone;
     private String dateAdded;
+    private int listId;
 
     public ToDoItem() {
     }
 
-    public ToDoItem(String name, boolean isDone, String dateAdded) {
+    public ToDoItem(String name, boolean isDone, int listId) {
+        this.name = name;
+        this.isDone = isDone;
+        this.listId = listId;
+    }
+
+    public ToDoItem(String name, boolean isDone, String dateAdded, int listId) {
         this.name = name;
         this.isDone = isDone;
         this.dateAdded = dateAdded;
+        this.listId = listId;
     }
 
-    public ToDoItem(int id, String name, boolean isDone, String dateAdded) {
+    public ToDoItem(int id, String name, boolean isDone, String dateAdded, int listId) {
         this.id = id;
         this.name = name;
         this.isDone = isDone;
         this.dateAdded = dateAdded;
+        this.listId = listId;
     }
 
     public int getId() {
@@ -52,5 +61,13 @@ public class ToDoItem {
 
     public void setDateAdded(String dateAdded) {
         this.dateAdded = dateAdded;
+    }
+
+    public int getListId() {
+        return listId;
+    }
+
+    public void setListId(int listId) {
+        this.listId = listId;
     }
 }

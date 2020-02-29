@@ -28,6 +28,7 @@ public class ToDoItemHandler extends DatabaseHandler {
         values.put(Constants.COLNAME_NAME, toDoItem.getName());
         values.put(Constants.COLNAME_ISDONE, toDoItem.isDone() ? 1 : 0);
         values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
+        values.put(Constants.COLNAME_LISTID, toDoItem.getListId());
 
         db.insert(Constants.TABLENAME_TODOITEM, null, values);
 
@@ -39,7 +40,7 @@ public class ToDoItemHandler extends DatabaseHandler {
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOITEM,
                 new String[]{Constants.COLNAME_ID, Constants.COLNAME_NAME, Constants.COLNAME_ISDONE,
-                        Constants.COLNAME_DATEADDED},
+                        Constants.COLNAME_DATEADDED, Constants.COLNAME_LISTID},
                 Constants.COLNAME_ID + "=?", new String[]{String.valueOf(id)},
                 null, null, null);
 
@@ -50,6 +51,7 @@ public class ToDoItemHandler extends DatabaseHandler {
         toDoItem.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
         toDoItem.setName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
         toDoItem.setDone(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ISDONE)) == 1);
+        toDoItem.setListId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_LISTID)));
 
         String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
         toDoItem.setDateAdded(dateString);
@@ -57,32 +59,33 @@ public class ToDoItemHandler extends DatabaseHandler {
         return toDoItem;
     }
 
-    public List<ToDoItem> getAllToDoItems(){
+    public List<ToDoItem> getToDoItemsByListId(int listId){
         toDoItems = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOITEM,
                 new String[]{Constants.COLNAME_ID, Constants.COLNAME_NAME, Constants.COLNAME_ISDONE,
-                        Constants.COLNAME_DATEADDED},
-                null, null, null, null,
+                        Constants.COLNAME_DATEADDED, Constants.COLNAME_LISTID},
+                Constants.COLNAME_LISTID + "=?", new String[]{String.valueOf(listId)},
+                null, null,
                 Constants.COLNAME_DATEADDED + " DESC");
 
-        if (cursor != null)
-            cursor.moveToFirst();
+        if (cursor != null && cursor.moveToFirst()){
+            do{
+                ToDoItem toDoItem = new ToDoItem();
+                toDoItem.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
+                toDoItem.setName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
+                toDoItem.setDone(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ISDONE)) == 1);
+                toDoItem.setListId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_LISTID)));
 
-        do{
-            ToDoItem toDoItem = new ToDoItem();
-            toDoItem.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
-            toDoItem.setName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
-            toDoItem.setDone(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ISDONE)) == 1);
+                String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
+                toDoItem.setDateAdded(dateString);
 
-            String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
-            toDoItem.setDateAdded(dateString);
+                toDoItems.add(toDoItem);
 
-            toDoItems.add(toDoItem);
-
-        }while(cursor.moveToNext());
+            }while(cursor.moveToNext());
+        }
 
         return toDoItems;
     }
@@ -108,12 +111,13 @@ public class ToDoItemHandler extends DatabaseHandler {
         db.close();
     }
 
-    public int getCount(){
+    public int getCountByListId(int listId){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT * FROM " + Constants.TABLENAME_TODOITEM;
+        String query = "SELECT * FROM " + Constants.TABLENAME_TODOITEM + " WHERE " +
+                Constants.COLNAME_LISTID + "=?";
 
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(listId)});
 
         return cursor.getCount();
     }

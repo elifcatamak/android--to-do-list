@@ -18,6 +18,7 @@ import com.example.todolistpractice.R;
 import com.example.todolistpractice.ShowItemsActivity;
 import com.example.todolistpractice.data.ToDoListHandler;
 import com.example.todolistpractice.model.ToDoList;
+import com.example.todolistpractice.util.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.MessageFormat;
@@ -92,6 +93,7 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
                     showAlertDialog();
                     break;
                 case R.id.listRow_detailsButton:
+                    // TODO: Items activity starts here, might need to modify the return case
                     showListItems();
                     break;
                 default:
@@ -101,7 +103,7 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
 
         private void showListItems() {
             Intent intent = new Intent(context, ShowItemsActivity.class);
-            intent.putExtra("listId", toDoLists.get(getAdapterPosition()).getId());
+            intent.putExtra(Constants.COLNAME_ID, toDoLists.get(getAdapterPosition()).getId());
             context.startActivity(intent);
         }
 

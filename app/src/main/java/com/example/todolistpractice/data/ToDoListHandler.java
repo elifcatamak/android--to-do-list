@@ -64,20 +64,19 @@ public class ToDoListHandler extends DatabaseHandler{
                 null, null, null, null,
                 Constants.COLNAME_DATEADDED + " DESC");
 
-        if (cursor != null)
-            cursor.moveToFirst();
+        if (cursor != null && cursor.moveToFirst()){
+            do{
+                ToDoList toDoList = new ToDoList();
+                toDoList.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
+                toDoList.setListName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
 
-        do{
-            ToDoList toDoList = new ToDoList();
-            toDoList.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
-            toDoList.setListName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
+                String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
+                toDoList.setDateAdded(dateString);
 
-            String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
-            toDoList.setDateAdded(dateString);
+                toDoLists.add(toDoList);
 
-            toDoLists.add(toDoList);
-
-        }while(cursor.moveToNext());
+            }while(cursor.moveToNext());
+        }
 
         return toDoLists;
     }

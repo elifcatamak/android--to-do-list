@@ -15,4 +15,7 @@
     <string name="popup_updateTitle">Update ToDo List</string>
     <string name="popup_updateButton">Update</string>
     <string name="itemRow_text">ToDo Item</string>
+    <string name="popupItem_title">Add ToDo Item</string>
+    <string name="popupItem_hint_name">Enter to-do item name</string>
+    <string name="popupItem_button">Add</string>
 </resources>

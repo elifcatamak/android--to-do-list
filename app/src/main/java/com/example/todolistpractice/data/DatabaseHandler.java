@@ -3,6 +3,7 @@ package com.example.todolistpractice.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -32,18 +33,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Constants.COLNAME_DATEADDED + " LONG)";
 
         db.execSQL(query);
+
+        this.onUpgrade(db, 0, Constants.DATABASE_VERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String query;
 
-        query = "DROP TABLE IF EXISTS " + Constants.TABLENAME_TODOLIST;
-        db.execSQL(query);
+        if(oldVersion < 2 && 2 <= newVersion){
+            query = "ALTER TABLE " + Constants.TABLENAME_TODOITEM + " ADD COLUMN " +
+                    Constants.COLNAME_LISTID + " INTEGER REFERENCES " + Constants.TABLENAME_TODOLIST +
+                    "(" + Constants.COLNAME_ID + ") ON DELETE CASCADE";
 
-        query = "DROP TABLE IF EXISTS " + Constants.TABLENAME_TODOITEM;
-        db.execSQL(query);
-
-        this.onCreate(db);
+            db.execSQL(query);
+        }
     }
 }
