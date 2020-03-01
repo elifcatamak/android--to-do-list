@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +34,7 @@ public class ShowItemsActivity extends AppCompatActivity {
 
     private ToDoItemHandler toDoItemHandler;
     private List<ToDoItem> toDoItemList;
-    private int listId;
+    private long listId;
 
     public ShowItemsActivity() {
     }
@@ -54,8 +53,9 @@ public class ShowItemsActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
 
         if(bundle != null){
-            listId = bundle.getInt(Constants.COLNAME_ID);
-            Log.d(TAG, "onCreate: Bundle " + listId);
+            listId = bundle.getLong(Constants.COLNAME_ID);
+
+            Log.d(TAG, "onCreate: listId=" + listId);
 
             toDoItemHandler = new ToDoItemHandler(this);
             toDoItemList = toDoItemHandler.getToDoItemsByListId(listId);
@@ -73,7 +73,7 @@ public class ShowItemsActivity extends AppCompatActivity {
         }
         else
         {
-            Log.d(TAG, "onCreate: Bundle " + Constants.COLNAME_ID + " is null");
+            Log.d(TAG, "onCreate: bundle=" + Constants.COLNAME_ID + " is null");
         }
     }
 
@@ -88,12 +88,19 @@ public class ShowItemsActivity extends AppCompatActivity {
         popupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!popupEditText.getText().toString().isEmpty()){
-                    saveToDoItem(createItem());
+                String newTodoName = popupEditText.getText().toString().trim();
+
+                if(!newTodoName.isEmpty()){
+                    ToDoItem toDoItem = new ToDoItem();
+                    toDoItem.setName(newTodoName);
+                    toDoItem.setDone(false);
+                    toDoItem.setListId(listId);
+
+                    saveToDoItem(toDoItem);
                 }
                 else
                 {
-                    Snackbar.make(v, "List name cannot be empty", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Item name cannot be empty", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -103,19 +110,16 @@ public class ShowItemsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private ToDoItem createItem() {
-        return new ToDoItem(popupEditText.getText().toString().trim(), false, listId);
-    }
-
     private void saveToDoItem(ToDoItem toDoItem) {
         toDoItemHandler = new ToDoItemHandler(this);
         toDoItemHandler.addToDoItem(toDoItem);
 
-        alertDialog.dismiss();
+        toDoItemList.add(0, toDoItem);
 
-        Intent intent = new Intent(ShowItemsActivity.this, ShowItemsActivity.class);
-        intent.putExtra(Constants.COLNAME_ID, listId);
-        startActivity(intent);
-        finish();
+        Log.d(TAG, "saveToDoItem: itemId=" + toDoItem.getId() + ", listId=" + toDoItem.getListId());
+
+        adapter.notifyItemInserted(0);
+
+        alertDialog.dismiss();
     }
 }

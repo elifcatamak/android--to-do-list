@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToDoListHandler extends DatabaseHandler{
-    private List<ToDoList> toDoLists;
+    private static final String TAG = "ToDoListHandler";
 
     public ToDoListHandler(@Nullable Context context) {
         super(context);
@@ -28,12 +29,14 @@ public class ToDoListHandler extends DatabaseHandler{
         values.put(Constants.COLNAME_NAME, toDoList.getListName());
         values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
 
-        db.insert(Constants.TABLENAME_TODOLIST, null, values);
+        long id = db.insert(Constants.TABLENAME_TODOLIST, null, values);
+
+        toDoList.setId(id);
 
         db.close();
     }
 
-    public ToDoList getToDoList(int id) {
+    public ToDoList getToDoList(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOLIST,
@@ -41,22 +44,25 @@ public class ToDoListHandler extends DatabaseHandler{
                 Constants.COLNAME_ID + "=?", new String[]{String.valueOf(id)},
                 null, null, null);
 
-        if (cursor != null)
-            cursor.moveToFirst();
-
         ToDoList toDoList = new ToDoList();
-        toDoList.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
-        toDoList.setListName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
 
-        String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
-        toDoList.setDateAdded(dateString);
+        if (cursor != null && cursor.moveToFirst()){
+            toDoList.setId(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_ID)));
+            toDoList.setListName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
+
+            String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
+            toDoList.setDateAdded(dateString);
+        }
+
+        if(cursor != null)
+            cursor.close();
+
+        Log.d(TAG, "getToDoList: id=" + toDoList.getId());
 
         return toDoList;
     }
 
     public List<ToDoList> getAllToDoLists(){
-        toDoLists = new ArrayList<>();
-
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOLIST,
@@ -64,10 +70,12 @@ public class ToDoListHandler extends DatabaseHandler{
                 null, null, null, null,
                 Constants.COLNAME_DATEADDED + " DESC");
 
+        List<ToDoList> toDoLists = new ArrayList<>();
+
         if (cursor != null && cursor.moveToFirst()){
             do{
                 ToDoList toDoList = new ToDoList();
-                toDoList.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
+                toDoList.setId(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_ID)));
                 toDoList.setListName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
 
                 String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
@@ -78,6 +86,11 @@ public class ToDoListHandler extends DatabaseHandler{
             }while(cursor.moveToNext());
         }
 
+        if(cursor != null)
+            cursor.close();
+
+        Log.d(TAG, "getAllToDoLists: listSize=" + toDoLists.size());
+
         return toDoLists;
     }
 
@@ -86,17 +99,22 @@ public class ToDoListHandler extends DatabaseHandler{
 
         ContentValues values = new ContentValues();
         values.put(Constants.COLNAME_NAME, toDoList.getListName());
-        values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
 
-        return db.update(Constants.TABLENAME_TODOLIST, values, Constants.COLNAME_ID + "=?",
+        int rowCount =  db.update(Constants.TABLENAME_TODOLIST, values, Constants.COLNAME_ID + "=?",
                 new String[]{String.valueOf(toDoList.getId())});
+
+        Log.d(TAG, "updateToDoList: rowCount=" + rowCount);
+
+        return rowCount;
     }
 
-    public void deleteToDoList(int id){
+    public void deleteToDoList(long id){
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(Constants.TABLENAME_TODOLIST, Constants.COLNAME_ID + "=?",
+        int rowCount = db.delete(Constants.TABLENAME_TODOLIST, Constants.COLNAME_ID + "=?",
                 new String[]{String.valueOf(id)});
+
+        Log.d(TAG, "deleteToDoList: rowCount=" + rowCount);
 
         db.close();
     }
@@ -108,6 +126,12 @@ public class ToDoListHandler extends DatabaseHandler{
 
         Cursor cursor = db.rawQuery(query, null);
 
-        return cursor.getCount();
+        int result = cursor.getCount();
+
+        cursor.close();
+
+        Log.d(TAG, "getCount: " + result);
+
+        return result;
     }
 }

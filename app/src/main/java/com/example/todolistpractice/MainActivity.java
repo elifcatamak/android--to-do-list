@@ -18,8 +18,6 @@ import com.example.todolistpractice.model.ToDoList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
 
-    private List<ToDoList> toDoLists;
     private DatabaseHandler databaseHandler;
     private ToDoListHandler toDoListHandler;
 
@@ -56,8 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void decideActivityToShow() {
         toDoListHandler = new ToDoListHandler(this);
+        int listCount = toDoListHandler.getCount();
 
-        if(toDoListHandler.getCount() != 0){
+        if(listCount != 0){
+            Log.d(TAG, "decideActivityToShow: listCount=" + listCount);
+
             startActivity(new Intent(MainActivity.this, ShowListsActivity.class));
             finish();
         }
@@ -78,8 +78,13 @@ public class MainActivity extends AppCompatActivity {
         popupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!popupListName.getText().toString().isEmpty()){
-                    saveToDoList();
+                String newListName = popupListName.getText().toString().trim();
+
+                if(!newListName.isEmpty()){
+                    ToDoList toDoList = new ToDoList();
+                    toDoList.setListName(newListName);
+
+                    saveToDoList(toDoList);
                 }
                 else{
                     Snackbar.make(v, "List name cannot be empty", Snackbar.LENGTH_SHORT).show();
@@ -92,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void saveToDoList() {
-        ToDoList toDoList = new ToDoList(popupListName.getText().toString().trim());
-
+    private void saveToDoList(ToDoList toDoList) {
         toDoListHandler = new ToDoListHandler(this);
         toDoListHandler.addToDoList(toDoList);
 

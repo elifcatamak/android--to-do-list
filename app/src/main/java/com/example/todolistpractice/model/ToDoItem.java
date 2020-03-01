@@ -1,29 +1,29 @@
 package com.example.todolistpractice.model;
 
 public class ToDoItem {
-    private int id;
+    private long id;
     private String name;
     private boolean isDone;
     private String dateAdded;
-    private int listId;
+    private long listId;
 
     public ToDoItem() {
     }
 
-    public ToDoItem(String name, boolean isDone, int listId) {
+    public ToDoItem(String name, boolean isDone, long listId) {
         this.name = name;
         this.isDone = isDone;
         this.listId = listId;
     }
 
-    public ToDoItem(String name, boolean isDone, String dateAdded, int listId) {
+    public ToDoItem(String name, boolean isDone, String dateAdded, long listId) {
         this.name = name;
         this.isDone = isDone;
         this.dateAdded = dateAdded;
         this.listId = listId;
     }
 
-    public ToDoItem(int id, String name, boolean isDone, String dateAdded, int listId) {
+    public ToDoItem(long id, String name, boolean isDone, String dateAdded, long listId) {
         this.id = id;
         this.name = name;
         this.isDone = isDone;
@@ -31,11 +31,11 @@ public class ToDoItem {
         this.listId = listId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -63,11 +63,11 @@ public class ToDoItem {
         this.dateAdded = dateAdded;
     }
 
-    public int getListId() {
+    public long getListId() {
         return listId;
     }
 
-    public void setListId(int listId) {
+    public void setListId(long listId) {
         this.listId = listId;
     }
 }

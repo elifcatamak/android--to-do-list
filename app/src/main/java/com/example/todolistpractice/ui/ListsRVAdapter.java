@@ -45,8 +45,10 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.listName.setText(MessageFormat.format("List name: {0}", toDoLists.get(position).getListName()));
-        holder.dateAdded.setText(MessageFormat.format("Date added: {0}", toDoLists.get(position).getDateAdded()));
+        ToDoList toDoList = toDoLists.get(position);
+
+        holder.listName.setText(MessageFormat.format("List name: {0}", toDoList.getListName()));
+        holder.dateAdded.setText(MessageFormat.format("Date added: {0}", toDoList.getDateAdded()));
     }
 
     @Override
@@ -55,6 +57,9 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private static final String TAG = "ViewHolder";
+        private Context context;
+
         private TextView listName;
         private TextView dateAdded;
         private Button deleteButton;
@@ -85,29 +90,31 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
+            int adapterPos = getAdapterPosition();
+            ToDoList toDoList = toDoLists.get(adapterPos);
+
             switch (v.getId()){
                 case R.id.listRow_deleteButton:
-                    showSurePopUp();
+                    showSurePopUp(toDoList, adapterPos);
                     break;
                 case R.id.listRow_editButton:
-                    showAlertDialog();
+                    showAlertDialog(toDoList, adapterPos);
                     break;
                 case R.id.listRow_detailsButton:
-                    // TODO: Items activity starts here, might need to modify the return case
-                    showListItems();
+                    showListItems(toDoList.getId());
                     break;
                 default:
                     break;
             }
         }
 
-        private void showListItems() {
+        private void showListItems(long listId) {
             Intent intent = new Intent(context, ShowItemsActivity.class);
-            intent.putExtra(Constants.COLNAME_ID, toDoLists.get(getAdapterPosition()).getId());
+            intent.putExtra(Constants.COLNAME_ID, listId);
             context.startActivity(intent);
         }
 
-        private void showAlertDialog() {
+        private void showAlertDialog(final ToDoList toDoList, final int adapterPos) {
             builder = new AlertDialog.Builder(context);
 
             View view = LayoutInflater.from(context).inflate(R.layout.popup_todolist,null);
@@ -119,14 +126,15 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
             popupTitle.setText(R.string.popup_updateTitle);
             popupButton.setText(R.string.popup_updateButton);
 
-            final ToDoList toDoList = toDoLists.get(getAdapterPosition());
             popupListName.setText(toDoList.getListName());
 
             popupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!popupListName.getText().toString().isEmpty()){
-                        updateList(toDoList);
+                    String newListName = popupListName.getText().toString().trim();
+
+                    if(!newListName.isEmpty()){
+                        updateList(toDoList, adapterPos, newListName);
                     }
                     else {
                         Snackbar.make(v, "List name cannot be empty", Snackbar.LENGTH_SHORT).show();
@@ -139,21 +147,23 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
             alertDialog.show();
         }
 
-        private void updateList(ToDoList toDoList) {
-            if(!popupListName.getText().toString().trim().equals(toDoLists.get(getAdapterPosition()).getListName()))
+        private void updateList(ToDoList toDoList, int adapterPos, String newListName) {
+            if(!newListName.equals(toDoList.getListName()))
             {
-                toDoList.setListName(popupListName.getText().toString().trim());
+                Log.d(TAG, "updateList: listId=" + toDoList.getId());
+
+                toDoList.setListName(newListName);
 
                 toDoListHandler = new ToDoListHandler(context);
                 toDoListHandler.updateToDoList(toDoList);
 
-                notifyItemChanged(getAdapterPosition(), toDoList);
+                notifyItemChanged(adapterPos, toDoList);
             }
 
             alertDialog.dismiss();
         }
 
-        private void showSurePopUp() {
+        private void showSurePopUp(final ToDoList toDoList, final int adapterPos) {
             builder = new AlertDialog.Builder(context);
 
             View view = LayoutInflater.from(context).inflate(R.layout.popup_sure, null);
@@ -168,7 +178,7 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
             yesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    deleteList(toDoLists.get(getAdapterPosition()).getId());
+                    deleteList(toDoList.getId(), adapterPos);
                 }
             });
 
@@ -180,13 +190,15 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
             });
         }
 
-        private void deleteList(int id) {
+        private void deleteList(long listId, int adapterPos) {
+            Log.d(TAG, "deleteList: listId=" + listId);
+
             toDoListHandler = new ToDoListHandler(context);
-            toDoListHandler.deleteToDoList(id);
+            toDoListHandler.deleteToDoList(listId);
 
-            toDoLists.remove(getAdapterPosition());
+            toDoLists.remove(adapterPos);
 
-            notifyItemRemoved(getAdapterPosition());
+            notifyItemRemoved(adapterPos);
 
             alertDialog.dismiss();
         }

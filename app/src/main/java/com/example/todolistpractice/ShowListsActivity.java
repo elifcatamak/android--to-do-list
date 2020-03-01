@@ -19,7 +19,6 @@ import com.example.todolistpractice.ui.ListsRVAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShowListsActivity extends AppCompatActivity {
@@ -34,6 +33,7 @@ public class ShowListsActivity extends AppCompatActivity {
     private AlertDialog.Builder builder;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    private RecyclerView.AdapterDataObserver observer;
 
     private List<ToDoList> toDoLists;
     private ToDoListHandler toDoListHandler;
@@ -50,15 +50,30 @@ public class ShowListsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         toDoListHandler = new ToDoListHandler(this);
-        toDoLists = new ArrayList<>();
         toDoLists = toDoListHandler.getAllToDoLists();
 
         for(ToDoList t: toDoLists)
-            Log.d(TAG, "onCreate: " + t.getListName());
+            Log.d(TAG, "onCreate: listName=" + t.getListName());
 
         adapter = new ListsRVAdapter(ShowListsActivity.this, toDoLists);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        observer = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+
+                if(adapter.getItemCount() == 0){
+                    Log.d(TAG, "onItemRangeRemoved: itemCount=" + adapter.getItemCount());
+
+                    startActivity(new Intent(ShowListsActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+        };
+
+        adapter.registerAdapterDataObserver(observer);
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +98,13 @@ public class ShowListsActivity extends AppCompatActivity {
         popupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!popupListName.getText().toString().isEmpty()){
-                    saveToDoList();
+                String newListName = popupListName.getText().toString().trim();
+
+                if(!newListName.isEmpty()){
+                    ToDoList toDoList = new ToDoList();
+                    toDoList.setListName(newListName);
+
+                    saveToDoList(toDoList);
                 }
                 else{
                     Snackbar.make(v, "List name cannot be empty", Snackbar.LENGTH_SHORT).show();
@@ -97,15 +117,16 @@ public class ShowListsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void saveToDoList() {
-        ToDoList toDoList = new ToDoList(popupListName.getText().toString().trim());
-
+    private void saveToDoList(ToDoList toDoList) {
         toDoListHandler = new ToDoListHandler(this);
         toDoListHandler.addToDoList(toDoList);
 
-        alertDialog.dismiss();
+        toDoLists.add(0, toDoList);
 
-        startActivity(new Intent(ShowListsActivity.this, ShowListsActivity.class));
-        finish();
+        Log.d(TAG, "saveToDoList: listId=" + toDoList.getId());
+
+        adapter.notifyItemInserted(0);
+
+        alertDialog.dismiss();
     }
 }

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToDoItemHandler extends DatabaseHandler {
-    private List<ToDoItem> toDoItems;
+    private static final String TAG = "ToDoItemHandler";
 
     public ToDoItemHandler(@Nullable Context context) {
         super(context);
@@ -30,12 +31,14 @@ public class ToDoItemHandler extends DatabaseHandler {
         values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
         values.put(Constants.COLNAME_LISTID, toDoItem.getListId());
 
-        db.insert(Constants.TABLENAME_TODOITEM, null, values);
+        long id = db.insert(Constants.TABLENAME_TODOITEM, null, values);
+
+        toDoItem.setId(id);
 
         db.close();
     }
 
-    public ToDoItem getToDoItem(int id) {
+    public ToDoItem getToDoItem(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOITEM,
@@ -44,24 +47,27 @@ public class ToDoItemHandler extends DatabaseHandler {
                 Constants.COLNAME_ID + "=?", new String[]{String.valueOf(id)},
                 null, null, null);
 
-        if (cursor != null)
-            cursor.moveToFirst();
-
         ToDoItem toDoItem = new ToDoItem();
-        toDoItem.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
-        toDoItem.setName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
-        toDoItem.setDone(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ISDONE)) == 1);
-        toDoItem.setListId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_LISTID)));
 
-        String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
-        toDoItem.setDateAdded(dateString);
+        if (cursor != null && cursor.moveToFirst()){
+            toDoItem.setId(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_ID)));
+            toDoItem.setName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
+            toDoItem.setDone(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ISDONE)) == 1);
+            toDoItem.setListId(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_LISTID)));
+
+            String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
+            toDoItem.setDateAdded(dateString);
+        }
+
+        if(cursor != null)
+            cursor.close();
+
+        Log.d(TAG, "getToDoItem: id=" + toDoItem.getId());
 
         return toDoItem;
     }
 
-    public List<ToDoItem> getToDoItemsByListId(int listId){
-        toDoItems = new ArrayList<>();
-
+    public List<ToDoItem> getToDoItemsByListId(long listId){
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Constants.TABLENAME_TODOITEM,
@@ -71,13 +77,15 @@ public class ToDoItemHandler extends DatabaseHandler {
                 null, null,
                 Constants.COLNAME_DATEADDED + " DESC");
 
+        List<ToDoItem> toDoItems = new ArrayList<>();
+
         if (cursor != null && cursor.moveToFirst()){
             do{
                 ToDoItem toDoItem = new ToDoItem();
-                toDoItem.setId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ID)));
+                toDoItem.setId(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_ID)));
                 toDoItem.setName(cursor.getString(cursor.getColumnIndex(Constants.COLNAME_NAME)));
                 toDoItem.setDone(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_ISDONE)) == 1);
-                toDoItem.setListId(cursor.getInt(cursor.getColumnIndex(Constants.COLNAME_LISTID)));
+                toDoItem.setListId(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_LISTID)));
 
                 String dateString = UsefulMethods.convertDate(cursor.getLong(cursor.getColumnIndex(Constants.COLNAME_DATEADDED)));
                 toDoItem.setDateAdded(dateString);
@@ -86,6 +94,11 @@ public class ToDoItemHandler extends DatabaseHandler {
 
             }while(cursor.moveToNext());
         }
+
+        if(cursor != null)
+            cursor.close();
+
+        Log.d(TAG, "getToDoItemsByListId: listSize=" + toDoItems.size());
 
         return toDoItems;
     }
@@ -98,20 +111,26 @@ public class ToDoItemHandler extends DatabaseHandler {
         values.put(Constants.COLNAME_ISDONE, toDoItem.isDone() ? 1 : 0);
         values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
 
-        return db.update(Constants.TABLENAME_TODOITEM, values, Constants.COLNAME_ID + "=?",
+        int rowCount =  db.update(Constants.TABLENAME_TODOITEM, values, Constants.COLNAME_ID + "=?",
                 new String[]{String.valueOf(toDoItem.getId())});
+
+        Log.d(TAG, "updateToDoItem: rowCount=" + rowCount);
+        
+        return rowCount;
     }
 
-    public void deleteToDoItem(int id){
+    public void deleteToDoItem(long id){
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(Constants.TABLENAME_TODOITEM, Constants.COLNAME_ID + "=?",
+        int rowCount = db.delete(Constants.TABLENAME_TODOITEM, Constants.COLNAME_ID + "=?",
                 new String[]{String.valueOf(id)});
+
+        Log.d(TAG, "deleteToDoItem: rowCount=" + rowCount);
 
         db.close();
     }
 
-    public int getCountByListId(int listId){
+    public int getCountByListId(long listId){
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = "SELECT * FROM " + Constants.TABLENAME_TODOITEM + " WHERE " +
@@ -119,6 +138,15 @@ public class ToDoItemHandler extends DatabaseHandler {
 
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(listId)});
 
-        return cursor.getCount();
+        if(cursor == null)
+            return 0;
+
+        int result = cursor.getCount();
+
+        cursor.close();
+
+        Log.d(TAG, "getCountByListId: " + result);
+
+        return result;
     }
 }

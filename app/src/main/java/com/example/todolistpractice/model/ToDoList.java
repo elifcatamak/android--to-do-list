@@ -1,7 +1,7 @@
 package com.example.todolistpractice.model;
 
 public class ToDoList {
-    int id;
+    long id;
     String listName;
     String dateAdded;
 
@@ -12,11 +12,11 @@ public class ToDoList {
         this.listName = listName;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

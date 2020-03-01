@@ -11,8 +11,12 @@ import com.example.todolistpractice.util.Constants;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
+    private static final String TAG = "DatabaseHandler";
+
     public DatabaseHandler(@Nullable Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
+
+        Log.d(TAG, "DatabaseHandler: version=" + Constants.DATABASE_VERSION);
     }
 
     @Override
@@ -22,7 +26,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         query = "CREATE TABLE IF NOT EXISTS " + Constants.TABLENAME_TODOLIST + " (" +
                 Constants.COLNAME_ID + " INTEGER PRIMARY KEY, " +
                 Constants.COLNAME_NAME + " TEXT, " +
-                Constants.COLNAME_DATEADDED + " LONG)";
+                Constants.COLNAME_DATEADDED + " INTEGER)";
 
         db.execSQL(query);
 
@@ -30,7 +34,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Constants.COLNAME_ID + " INTEGER PRIMARY KEY, " +
                 Constants.COLNAME_NAME + " TEXT, " +
                 Constants.COLNAME_ISDONE + " INTEGER, " +
-                Constants.COLNAME_DATEADDED + " LONG)";
+                Constants.COLNAME_DATEADDED + " INTEGER)";
 
         db.execSQL(query);
 
