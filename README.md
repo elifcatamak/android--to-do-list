@@ -14,8 +14,8 @@ first screen user encounters.
 
 As soon as the user adds a to-do list using the floating action button,
 user will be redirected to the lists screen. Lists screen is a screen
-where user's all to-do lists are displayed. When user runs the app, if
-user has existing to-do lists introduction screen will be bypassed and Lists
+where user's all to-do lists are displayed. When user runs the app if
+user has existing to-do lists, introduction screen will be bypassed and lists
 screen will be shown immediately.
 
 ![sstwo.PNG](docs/screenshots/sstwo.PNG) &nbsp;&nbsp;&nbsp; ![ssthree.PNG](docs/screenshots/ssthree.PNG)
@@ -42,7 +42,7 @@ can add new to-do items.
 
 ![sseight.PNG](docs/screenshots/sseight.PNG)
 
-On this screen, user can also check the ones he/she already completed as well as being
+User can check the to-do items he/she already completed, as well as being
 able to uncheck them if desired.
 
 ![ssnine.PNG](docs/screenshots/ssnine.PNG)
