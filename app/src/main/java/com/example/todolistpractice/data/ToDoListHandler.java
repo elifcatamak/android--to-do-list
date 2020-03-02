@@ -25,13 +25,16 @@ public class ToDoListHandler extends DatabaseHandler{
     public void addToDoList(ToDoList toDoList){
         SQLiteDatabase db = this.getWritableDatabase();
 
+        long currentDate = System.currentTimeMillis();
+
         ContentValues values = new ContentValues();
         values.put(Constants.COLNAME_NAME, toDoList.getListName());
-        values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
+        values.put(Constants.COLNAME_DATEADDED, currentDate);
 
         long id = db.insert(Constants.TABLENAME_TODOLIST, null, values);
 
         toDoList.setId(id);
+        toDoList.setDateAdded(UsefulMethods.convertDate(currentDate));
 
         db.close();
     }

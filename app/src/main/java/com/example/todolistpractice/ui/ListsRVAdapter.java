@@ -101,16 +101,18 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
                     showAlertDialog(toDoList, adapterPos);
                     break;
                 case R.id.listRow_detailsButton:
-                    showListItems(toDoList.getId());
+                    showListItems(toDoList);
                     break;
                 default:
                     break;
             }
         }
 
-        private void showListItems(long listId) {
+        private void showListItems(ToDoList toDoList) {
             Intent intent = new Intent(context, ShowItemsActivity.class);
-            intent.putExtra(Constants.COLNAME_ID, listId);
+            intent.putExtra(Constants.COLNAME_ID, toDoList.getId());
+            intent.putExtra(Constants.COLNAME_NAME, toDoList.getListName());
+
             context.startActivity(intent);
         }
 
@@ -170,6 +172,9 @@ public class ListsRVAdapter extends RecyclerView.Adapter<ListsRVAdapter.ViewHold
 
             Button yesButton = view.findViewById(R.id.popupSure_yesButton);
             Button noButton = view.findViewById(R.id.popupSure_noButton);
+            TextView titleText = view.findViewById(R.id.popupSure_text);
+
+            titleText.setText(MessageFormat.format("Are you sure to delete {0}?", toDoList.getListName()));
 
             builder.setView(view);
             alertDialog = builder.create();

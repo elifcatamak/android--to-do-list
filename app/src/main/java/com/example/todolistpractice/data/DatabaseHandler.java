@@ -53,4 +53,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.execSQL(query);
         }
     }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+
+        db.setForeignKeyConstraintsEnabled(true);
+    }
 }

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.todolistpractice.data.ToDoItemHandler;
 import com.example.todolistpractice.model.ToDoItem;
@@ -25,6 +26,7 @@ public class ShowItemsActivity extends AppCompatActivity {
 
     private FloatingActionButton fabAdd;
     private EditText popupEditText;
+    private TextView listTitleTextView;
     private Button popupButton;
 
     private RecyclerView recyclerView;
@@ -44,6 +46,7 @@ public class ShowItemsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_items);
 
+        listTitleTextView = findViewById(R.id.showItems_listTitle);
         fabAdd = findViewById(R.id.showItems_fab_add);
         recyclerView = findViewById(R.id.showItems_recyclerView);
 
@@ -54,6 +57,7 @@ public class ShowItemsActivity extends AppCompatActivity {
 
         if(bundle != null){
             listId = bundle.getLong(Constants.COLNAME_ID);
+            listTitleTextView.setText(bundle.getString(Constants.COLNAME_NAME));
 
             Log.d(TAG, "onCreate: listId=" + listId);
 
