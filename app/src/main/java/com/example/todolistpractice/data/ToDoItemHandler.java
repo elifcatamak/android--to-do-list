@@ -74,8 +74,7 @@ public class ToDoItemHandler extends DatabaseHandler {
                 new String[]{Constants.COLNAME_ID, Constants.COLNAME_NAME, Constants.COLNAME_ISDONE,
                         Constants.COLNAME_DATEADDED, Constants.COLNAME_LISTID},
                 Constants.COLNAME_LISTID + "=?", new String[]{String.valueOf(listId)},
-                null, null,
-                Constants.COLNAME_DATEADDED + " DESC");
+                null, null, null);
 
         List<ToDoItem> toDoItems = new ArrayList<>();
 
@@ -109,7 +108,6 @@ public class ToDoItemHandler extends DatabaseHandler {
         ContentValues values = new ContentValues();
         values.put(Constants.COLNAME_NAME, toDoItem.getName());
         values.put(Constants.COLNAME_ISDONE, toDoItem.isDone() ? 1 : 0);
-        values.put(Constants.COLNAME_DATEADDED, System.currentTimeMillis());
 
         int rowCount =  db.update(Constants.TABLENAME_TODOITEM, values, Constants.COLNAME_ID + "=?",
                 new String[]{String.valueOf(toDoItem.getId())});
